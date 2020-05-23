@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jonathanKingston/containers-theme.git"
+    "url": "git+https://github.com/munyari/containers-theme.git"
   },
   "author": "Jonathan Kingston",
   "license": "MPL-2.0",
   "bugs": {
-    "url": "https://github.com/jonathanKingston/containers-theme/issues"
+    "url": "https://github.com/munyari/containers-theme/issues"
   },
-  "homepage": "https://github.com/jonathanKingston/containers-theme#readme",
+  "homepage": "https://github.com/munyari/containers-theme#readme",
   "devDependencies": {
     "web-ext": "^4.2.0"
   }
