@@ -2,7 +2,7 @@ class containersTheme {
   constructor() {
     browser.runtime.getBrowserInfo().then(info => {
       const version = info.version.match(/^(\d+)/);
-      this.useThemePropertiesWhenOlderThanFirefox65 = (version < 65);
+      this.useThemePropertiesWhenOlderThanFirefox65 = version < 65;
 
       browser.tabs.onActivated.addListener(() => {
         this.getCurrentContainer();
@@ -11,43 +11,49 @@ class containersTheme {
         this.getCurrentContainer();
       });
 
+      this.getDefaultTheme();
       this.getCurrentContainer();
     });
+  }
+
+  async getDefaultTheme() {
+    this.defaultTheme = await browser.theme.getCurrent();
   }
 
   async getCurrentContainer() {
     const activeTabs = await browser.tabs.query({
       active: true
     });
-    const hasUnpainted = activeTabs.some((tab) => {
+    const hasUnpainted = activeTabs.some(tab => {
       return this.isUnpaintedTheme(tab.cookieStoreId);
     });
     const containers = await this.getContainers();
     if (hasUnpainted) {
       this.resetTheme();
     }
-    activeTabs.forEach((tab) => {
+    activeTabs.forEach(tab => {
       const cookieStoreId = tab.cookieStoreId;
-      if (!this.isUnpaintedTheme(cookieStoreId)) {
-        this.changeTheme(cookieStoreId,
-          tab.windowId,
-          containers.get(cookieStoreId));
-      }
+      const newTheme = this.isUnpaintedTheme(cookieStoreId)
+        ? this.defaultTheme
+        : containers.get(cookieStoreId);
+      this.changeTheme(cookieStoreId, tab.windowId, newTheme);
     });
   }
 
   async getContainers() {
     const containersMap = new Map();
     const containers = await browser.contextualIdentities.query({});
-    containers.forEach((container) => {
+    containers.forEach(container => {
       containersMap.set(container.cookieStoreId, container);
     });
     return containersMap;
   }
 
   isUnpaintedTheme(currentCookieStore) {
-    return (currentCookieStore == "firefox-default" ||
-            currentCookieStore == "firefox-private");
+    return (
+      currentCookieStore == "firefox-default" ||
+      currentCookieStore == "firefox-private"
+    );
   }
 
   resetTheme() {
@@ -62,11 +68,11 @@ class containersTheme {
 
     const theme = {
       images: {
-        theme_frame: "",
+        theme_frame: ""
       },
       colors: {
         frame: container.colorCode,
-        tab_background_text: "#111",
+        tab_background_text: "#111"
       }
     };
 
@@ -88,7 +94,6 @@ class containersTheme {
     delete theme.colors.frame;
     delete theme.colors.tab_background_text;
   }
-
 }
 
 new containersTheme();
