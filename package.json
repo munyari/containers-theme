@@ -3,8 +3,8 @@
   "version": "1.1.0",
   "description": "Changes the current browser window theme to match the colour of the active tab.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "web-ext build"
+    "build": "web-ext build",
+    "start:firefox": "web-ext run --source-dir ./extension-dist/"
   },
   "repository": {
     "type": "git",
